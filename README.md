@@ -20,16 +20,13 @@ The command can be terminated with a symbol to trigger a special action:
 # 1. clone dynmenu to .menu
 git clone https://github.com/Kasalehlia/dynmenu.git ~/.menu
 
-# 2. create database
-cat ~/.menu/menu.sql|sqlite3 ~/.menu/main.sqlite
-
-# 3. fill database with commands
+# 2. create database and fill database with commands
 ~/.menu/menu-update
 
-# 4. change your window managers hotkey for dmenu to
+# 3. change your window managers hotkey for dmenu to
 ~/.menu/menu main
 
-# rerun step 3 for new commands
+# rerun step 2 for new commands
 ```
 
 Optional: On Debian/Ubuntu you can copy 99menu-update to /etc/apt/apt.conf.d/ to register `menu-update` as apt hook.

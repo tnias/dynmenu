@@ -5,13 +5,14 @@ menu="main"
 if [[ -n $1 ]]; then
 	menu=$1
 fi
-if [[ ! -e ~/.menu/${menu}.sqlite ]]; then
-	echo "menu file not found"
-	exit 1
+if [[ ! -e "${HOME}/.menu/${menu}.sqlite" ]]; then
+	echo "No menu file found. Create new one."
+	mkdir -pv "${HOME}/.menu/"
+	sqlite3 "${HOME}/.menu/${menu}.sqlite" < ~/.menu/menu.sql
 fi
 
 commands_to_be_added()  {
-	existing=$(sqlite3 -line ~/.menu/${menu}.sqlite "SELECT name FROM commands ORDER BY weight DESC" | grep -v "^$" | cut -b 9- | sort)
+	existing=$(sqlite3 -line "${HOME}/.menu/${menu}.sqlite" "SELECT name FROM commands ORDER BY weight DESC" | grep -v "^$" | cut -b 9- | sort)
 	IFS=':'
 	(for dir in $PATH; do
 		ls -1 "$dir"
@@ -22,7 +23,7 @@ IFS=$'\n'
 ctba=$(commands_to_be_added)
 for c in $(echo "$ctba"); do
 	echo "$c|$c|0"
-done | sqlite3 -separator "|" ~/.menu/${menu}.sqlite ".import /dev/stdin commands"
+done | sqlite3 -separator "|" "${HOME}/.menu/${menu}.sqlite" ".import /dev/stdin commands"
 if [[ -z $ctba ]]; then
 	echo "dynmenu: no commands added"
 else

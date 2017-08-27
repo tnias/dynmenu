@@ -1,12 +1,16 @@
-#!/bin/bash
+#!/bin/sh
 
-menu_name=$1
+menu="main"
+if [[ -n $1 ]]; then
+	menu=$1
+fi
+
 shift 1
 
-if [ -e ~/.menu/${menu_name}.menu ]; then
-	cmd=`~/.menu/${menu_name}.menu $2 | dmenu -i`
-elif [ -e ~/.menu/${menu_name}.sqlite ]; then
-	cmd=`sqlite3 -line ~/.menu/${menu_name}.sqlite "SELECT name FROM commands ORDER BY weight DESC" | grep -v "^$" | cut -b 9- | dmenu -i $@`
+if [ -e ~/.menu/${menu}.menu ]; then
+	cmd=`~/.menu/${menu}.menu $2 | dmenu -i`
+elif [ -e ~/.menu/${menu}.sqlite ]; then
+	cmd=`sqlite3 -line ~/.menu/${menu}.sqlite "SELECT name FROM commands ORDER BY weight DESC" | grep -v "^$" | cut -b 9- | dmenu -i $@`
 else
 	echo "menu file not found"
 	exit
@@ -23,8 +27,8 @@ elif [[ "$cmd" == *\? ]]; then
 	cmd="${cmd%?}"
 fi
 
-if [ -e ~/.menu/${menu_name}.post ]; then
-	cmd=`echo $cmd | ~/.menu/${menu_name}.post $2`
+if [ -e ~/.menu/${menu}.post ]; then
+	cmd=`echo $cmd | ~/.menu/${menu}.post $2`
 fi
 
 if [[ "$cmd" == *\; ]]; then
